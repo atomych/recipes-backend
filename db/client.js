@@ -2,11 +2,11 @@ import pg from 'pg';
 const { Client } = pg;
 
 export const client = new Client({
-    user: 'admin',
-    host: 'localhost',
-    database: 'mydb',
-    password: 'password',
-    port: 5432,
+    user: process.env.DB_USER || 'admin',
+    host: process.env.DB_HOST || 'localhost',
+    database: process.env.DB_NAME || 'mydb',
+    password: process.env.DB_PASSWORD || 'password',
+    port: process.env.DB_PORT || 5432,
 });
 
 export function connect() {
@@ -14,13 +14,5 @@ export function connect() {
         client.connect();
     } catch (error) {
         console.log("connection db error: ", error);
-    }
-}
-
-export function disconnect() {
-    try {
-        client.close();
-    } catch (error) {
-        console.log("disconnect db error: ", error);
     }
 }
