@@ -22,13 +22,24 @@ app.get('/api/user', async (req, res) => {
 
 app.get('/api/recipes', async (req, res) => {
     const userId = Number(req.query.userId) || "";
+    const recipeId = Number(req.query.recipeId) || "";
     if (!userId) res.status(400).json({error: "userId is empty"});
-    try {
-        const response = await db.client.query("SELECT title, description, ingredients FROM recipes WHERE user_id = $1", [userId]);
-        if (response.rows.length) res.status(200).json(response.rows);
-        else res.status(400).json({error: "recipes not found"});
-    } catch (error) {
-        console.log("query error: ", error);
+    if (!recipeId) {
+        try {
+            const response = await db.client.query("SELECT id, title, description, ingredients FROM recipes WHERE user_id = $1", [userId]);
+            if (response.rows.length) res.status(200).json(response.rows);
+            else res.status(400).json({error: "recipes not found"});
+        } catch (error) {
+            console.log("query error: ", error);
+        }
+    } else {
+        try {
+            const response = await db.client.query("SELECT id, title, description, ingredients FROM recipes WHERE user_id = $1 AND id = $2", [userId, recipeId]);
+            if (response.rows.length) res.status(200).json(response.rows[0]);
+            else res.status(400).json({error: "recipe not found"});
+        } catch (error) {
+            console.log("query error: ", error);
+        }
     }
 });
 
