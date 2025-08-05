@@ -3,12 +3,13 @@ import cors from 'cors';
 import db from './db/index.js';
 
 const app = express();
+app.disable('etag');
 app.use(cors({
     origin: [
         'http://localhost',
         'http://localhost:80',
         'https://localhost',
-        'https://домен.ру',
+        process.env.PROD_URL || '',
     ],
     methods: ['GET', 'PUT', 'POST', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
