@@ -3,7 +3,16 @@ import cors from 'cors';
 import db from './db/index.js';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: [
+        'http://localhost',
+        'http://localhost:80',
+        'https://localhost',
+        'https://домен.ру',
+    ],
+    methods: ['GET', 'PUT', 'POST', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json({limit: "1mb"}));
 
 db.connect();
