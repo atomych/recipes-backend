@@ -10,6 +10,7 @@ app.use(cors({
     origin: [
         'http://localhost',
         'http://localhost:80',
+        'http://localhost:5173',
         'https://localhost',
         process.env.PROD_URL || '',
     ],
