@@ -3,9 +3,10 @@ import uuid from "../common/uuid.js";
 
 async function getAllUserRecipes(req, res) {
     const userId = req.user.id;
+    const searchValue = req.query.search?.trim() || "";
     try {
         const query = await db.client.query("SELECT id, title, description, ingredients, tags, last_update  FROM recipes WHERE user_id = $1", [userId]);
-        const recipes = query.rows;
+        const recipes = searchValue ? query.rows.filter(recipe => recipe.title.includes(searchValue) || recipe.description.includes(searchValue)) : query.rows;
         return res.status(200).send({
             total: recipes.length,
             recipes,
