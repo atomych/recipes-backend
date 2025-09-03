@@ -1,14 +1,34 @@
 export default {
     database: {
         error: {
-            code: "db",
+            code: 10001,
             message: "database error",
         },
     },
     hash: {
         error: {
-            code: "hash",
+            code: 10002,
             message: "hash error",
+        },
+    },
+    middleware: {
+        auth: {
+            notFound: {
+                code: 10003,
+                message: "token not found",
+            },
+            invalidFormat: {
+                code: 10004,
+                message: "invalid token format",
+            },
+            invalidToken: {
+                code: 10005,
+                message: "invalid token",
+            },
+            internal: {
+                code: 10006,
+                message: "internal error",
+            },
         },
     },
     auth: {
