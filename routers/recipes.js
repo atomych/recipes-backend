@@ -1,16 +1,25 @@
 import db from "../db/index.js";
 import uuid from "../common/uuid.js";
 import error from "../error/index.js";
+import helpers from "./helpers/index.js";
 
 async function getAllUserRecipes(req, res) {
     const userId = req.user.id;
-    const searchValue = req.query.search?.trim() || "";
+    const searchValue = req.query.search?.trim()?.toLowerCase() || "";
+    const filterTags = req.query?.tags?.split("_") || [];
+    const filterIngredients = req.query?.ingredients?.split("_") || [];
     try {
         const query = await db.client.query("SELECT id, title, description, ingredients, tags, last_update  FROM recipes WHERE user_id = $1", [userId]);
-        const recipes = searchValue ? query.rows.filter(recipe => recipe.title.includes(searchValue) || recipe.description.includes(searchValue)) : query.rows;
+        const recipes = helpers.functions.getFilteredRecipes(query.rows, {
+            search: searchValue,
+            tags: filterTags,
+            ingredients: filterIngredients,
+        });
+        const filters = helpers.functions.userFilters(query.rows);
         return res.status(200).send({
             total: recipes.length,
             recipes,
+            filters,
         });
     } catch (error) {
         return res.status(500).send(JSON.stringify(error.errors.recipes.list.getList));
