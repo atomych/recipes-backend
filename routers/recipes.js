@@ -21,7 +21,8 @@ async function getAllUserRecipes(req, res) {
             recipes,
             filters,
         });
-    } catch (error) {
+    } catch (err) {
+        console.log(err)
         return res.status(500).send(JSON.stringify(error.errors.recipes.list.getList));
     }
 }
@@ -34,7 +35,7 @@ async function getRecipe(req, res) {
         const query = await db.client.query("SELECT id, title, description, ingredients, tags, last_update  FROM recipes WHERE user_id = $1 AND id = $2", [userId, recipeId]);
         if (!query.rowCount) return res.status(400).send(JSON.stringify(error.errors.recipes.getRecipe.notFound));
         return res.status(200).send(query.rows[0]);
-    } catch(error) {
+    } catch(_) {
         return res.status(500).send(JSON.stringify(error.errors.database.error));
     }
 }
@@ -49,7 +50,7 @@ async function deleteRecipe(req, res) {
         const deleteRecipe = await db.client.query("DELETE FROM recipes WHERE user_id = $1 AND id = $2", [userId, recipeId]);
         if (!deleteRecipe.rowCount) return res.status(400).send(JSON.stringify(error.errors.database.error));
         return res.status(200).send({});
-    } catch (error) {
+    } catch (_) {
         return res.status(500).send(JSON.stringify(error.errors.database.error));
     }
 }
@@ -70,7 +71,7 @@ async function updateRecipe(req, res) {
             const add = await db.client.query("INSERT INTO recipes (id, user_id, title, description, ingredients, tags, last_update) VALUES ($1, $2, $3, $4, $5, $6, $7)", [id, userId, title, description, ingredients, tags, lastUpdate]);
             if (!add.rowCount) return res.status(400).send(JSON.stringify(error.errors.database.error));
             return res.status(200).send({ id });
-        }  catch (error) {
+        }  catch (_) {
             return res.status(500).send(JSON.stringify(error.errors.database.error));
         }
     }
@@ -86,7 +87,7 @@ async function updateRecipe(req, res) {
         const update = await db.client.query("UPDATE recipes SET title = $1, description = $2, ingredients = $3, tags = $4, last_update = $5 WHERE id = $6", [validTitle, validDescription, validIngredients, validTags, lastUpdate, recipeId]);
         if (!update.rowCount) return res.status(400).send(JSON.stringify(error.errors.database.error));
         return res.status(200).send({ id: recipeId });
-    } catch (error) {
+    } catch (_) {
         return res.status(500).send(JSON.stringify(error.errors.database.error));
     }
 }

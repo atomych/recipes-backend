@@ -33,7 +33,7 @@ async function registerUser(req, res) {
         const query = await db.client.query("INSERT INTO users(id, name, email, password) VALUES($1, $2, $3, $4)", [id, validName, validEmail, hashedPassword]);
         if (query.rowCount) return res.status(200).send({ id });
         return res.status(400).send(JSON.stringify(error.errors.database.error));
-    } catch (error) {
+    } catch (_) {
         if (error.code === "23505") {
             return res.status(400).send(JSON.stringify(error.errors.auth.register.duplicateEmail));
         }
@@ -56,7 +56,7 @@ async function loginUser(req, res) {
         const id = query.rows[0].id;
         const code = jwt.getCode(id);
         return res.status(200).send({ id, code });
-    } catch (error) {
+    } catch (_) {
         return res.status(400).send(JSON.stringify(error.errors.database.error));
     }
 }
